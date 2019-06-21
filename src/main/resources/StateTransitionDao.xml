@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.random.fsm.dao.StateTransitionDao">
+    <resultMap id="resultMap" type="org.random.fsm.entity.StateTransitionEntity">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="machine_id" property="machineId" jdbcType="BIGINT"/>
+        <result column="prev_state_node_id" property="prevStateNodeId" jdbcType="BIGINT"/>
+        <result column="next_state_node_id" property="nextStateNodeId" jdbcType="BIGINT"/>
+        <result column="action_id" property="actionId" jdbcType="VARCHAR"/>
+        <result column="action_rule" property="actionRule" jdbcType="VARCHAR"/>
+        <result column="action_priori" property="actionPriori" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="DATE"/>
+        <result column="update_time" property="updateTime" jdbcType="DATE"/>
+    </resultMap>
+
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        <!--
+        <selectKey resultType="java.lang.Long" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        -->
+        insert into fsm_state_transition
+        (machine_id, prev_state_node_id, next_state_node_id, action_id, action_rule, action_priori, create_time,
+        update_time)
+        values
+        <foreach collection="list" item="transition" index="index" separator=",">
+            (
+            #{transition.machineId},
+            #{transition.prevStateNodeId},
+            #{transition.nextStateNodeId},
+            #{transition.actionId},
+            #{transition.actionRule},
+            #{transition.actionPriori},
+            now(), now()
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectByMachineId" parameterType="java.lang.Long" resultMap="resultMap">
+        select id, machine_id, prev_state_node_id, next_state_node_id, action_id, action_rule,
+        action_priori, create_time, update_time from
+        fsm_state_transition where machine_id = #{id, jdbcType=BIGINT}
+    </select>
+</mapper>

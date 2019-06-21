@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.random.fsm.dao.StateMachineInstanceDao">
+    <resultMap id="resultMap" type="org.random.fsm.entity.StateMachineInstanceEntity">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="instance_id" property="instanceId" jdbcType="VARCHAR"/>
+        <result column="parent_instance_id" property="parentInstanceId" jdbcType="VARCHAR"/>
+        <result column="machine_id" property="machineId" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="available" property="available" jdbcType="BOOLEAN"/>
+        <result column="node_id" property="nodeId" jdbcType="VARCHAR"/>
+        <result column="node_instance_id" property="nodeInstanceId" jdbcType="VARCHAR"/>
+        <result column="node_value" property="nodeValue" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="DATE"/>
+        <result column="update_time" property="updateTime" jdbcType="DATE"/>
+    </resultMap>
+
+    <select id="selectByInstanceId" parameterType="java.lang.String" resultMap="resultMap">
+        select id, instance_id, machine_id, version, available, node_id, node_instance_id, node_value,
+        create_time, update_time from fsm_state_machine_instance where instance_id = #{instanceId, jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="org.random.fsm.entity.StateMachineInstanceEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into fsm_state_machine_instance
+        (
+        instance_id,
+        <if test="parentInstanceId != null">
+            parent_instance_id,
+        </if>
+        machine_id,
+        version,
+        available,
+        node_id,
+        node_instance_id,
+        node_value,
+        create_time,
+        update_time
+        )
+        values
+        (
+        #{instanceId, jdbcType=VARCHAR},
+        <if test="parentInstanceId != null">
+            #{parentInstanceId, jdbcType=VARCHAR},
+        </if>
+        #{machineId, jdbcType=VARCHAR},
+        <if test="referenceId != null">
+            #{referenceId, jdbcType=VARCHAR},
+        </if>
+        #{version, jdbcType=INTEGER},
+        #{available, jdbcType=BOOLEAN},
+        #{nodeId, jdbcType=VARCHAR},
+        #{nodeInstanceId, jdbcType=VARCHAR},
+        #{nodeValue, jdbcType=INTEGER},
+        now(), now()
+        )
+    </insert>
+
+    <update id="updateByInstanceId" parameterType="org.random.fsm.entity.StateMachineInstanceEntity">
+        update fsm_state_machine_instance
+        set
+        available = #{available, jdbcType=BOOLEAN},
+        node_id = #{nodeId, jdbcType=VARCHAR},
+        node_instance_id = #{nodeInstanceId, jdbcType=VARCHAR},
+        node_value = #{nodeValue, jdbcType=INTEGER},
+        update_time = now()
+        where instance_id = #{instanceId, jdbcType=VARCHAR}
+    </update>
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <bean id="stateMachineManager" class="org.random.fsm.impl.DefaultStateMachineManager">
+        <property name="stateMachineFactory" ref="stateMachineFactory"/>
+    </bean>
+    <bean id="transitionActionInterceptor" class="org.random.fsm.impl.TransitionActionInterceptor">
+        <property name="manager" ref="stateMachineManager"/>
+    </bean>
+    <aop:config>
+        <aop:pointcut id="doForward" expression="execution(* org.random.fsm.ITransitAction.doAction(..))"/>
+        <aop:pointcut id="doReverse" expression="execution(* org.random.fsm.IReversible.doReverse(..))"/>
+        <aop:aspect id="aspect" ref="transitionActionInterceptor">
+            <aop:around pointcut-ref="doForward" method="doForward"/>
+            <aop:around pointcut-ref="doReverse" method="doReverse"/>
+        </aop:aspect>
+    </aop:config>
+
+    <bean id="stateMachineFactory" class="org.random.fsm.impl.DefaultStateMachineFactory"/>
+
+    <bean id="stateMachineHelper" class="org.random.fsm.StateMachineHelper"/>
+
+    <bean id="transitionActionRegister" class="org.random.fsm.impl.TransitionActionRegister"/>
+</beans>

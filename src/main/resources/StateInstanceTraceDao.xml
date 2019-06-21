@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.random.fsm.dao.StateInstanceTraceDao">
+    <resultMap id="resultMap" type="org.random.fsm.entity.StateInstanceTraceEntity">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="machine_instance_id" property="machineInstanceId" jdbcType="VARCHAR"/>
+        <result column="prev_node_instance_id" property="prevNodeInstanceId" jdbcType="VARCHAR"/>
+        <result column="prev_node_id" property="prevNodeId" jdbcType="VARCHAR"/>
+        <result column="next_node_instance_id" property="nextNodeInstanceId" jdbcType="VARCHAR"/>
+        <result column="next_node_id" property="nextNodeId" jdbcType="VARCHAR"/>
+        <result column="parameter" property="parameter" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="DATE"/>
+        <result column="update_time" property="updateTime" jdbcType="DATE"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="org.random.fsm.entity.StateInstanceTraceEntity"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into fsm_state_instance_trace
+        (
+        machine_instance_id,
+        prev_node_instance_id,
+        prev_node_id,
+        next_node_instance_id,
+        next_node_id,
+        parameter,
+        create_time,
+        update_time
+        )
+        values
+        (
+        #{machineInstanceId, jdbcType=VARCHAR},
+        #{prevNodeInstanceId, jdbcType=VARCHAR},
+        #{prevNodeId, jdbcType=VARCHAR},
+        #{nextNodeInstanceId, jdbcType=VARCHAR},
+        #{nextNodeId, jdbcType=VARCHAR},
+        #{parameter, jdbcType=VARCHAR},
+        now(), now()
+        )
+    </insert>
+
+    <select id="selectByInstanceId" parameterType="java.lang.String" resultMap="resultMap">
+        select
+        id,
+        machine_instance_id,
+        prev_node_instance_id,
+        prev_node_id,
+        next_node_instance_id,
+        next_node_id,
+        parameter,
+        create_time,
+        update_time
+        from
+        fsm_state_instance_trace
+        where
+        machine_instance_id = #{id, jdbcType=VARCHAR}
+    </select>
+</mapper>

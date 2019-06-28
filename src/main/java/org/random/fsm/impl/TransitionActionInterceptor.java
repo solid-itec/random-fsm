@@ -21,7 +21,7 @@ public final class TransitionActionInterceptor implements Ordered {
      * @return
      */
     public Object doForward(ProceedingJoinPoint point) {
-        // 获取被代理的com.ymm.saas.tms.fsm.ITransitionAction对象实例
+        // 获取被代理的ITransitionAction对象实例
         Object target = point.getTarget();
         ITransitAction action = (ITransitAction) target;
         // 获取调用参数
